@@ -1,3 +1,4 @@
+/* global myTimer */
 var letters = "ABCDEFGHI";
 var digits = "123456789";
 var qv = "tttmmmbbb";
@@ -7,7 +8,7 @@ var squares = {};
 var unitlist = {};
 var units = {};
 var peers = {};
-
+var valueResults =[];
 Array.prototype.contains = function(v){
     return this.indexOf(v) >= 0;
 }
@@ -47,13 +48,19 @@ for(var s in squares){
     });
 }
 
+//function myTimer(){
+    
+//}
+
 function assign(values, s, d){
     var otherVals = values[s].replace(d,'');
     
     for (var i=0; i < otherVals.length;i++){
         if(!eliminate(values,s,otherVals[i])){
+            //setTimeout(function(){eliminate(values,peer,values[s])},100);
             return false; //contradiction encountered.
         }
+        
     }
     
     return values;
@@ -84,12 +91,56 @@ function parseGrid(grid){
 
 
 function eliminate(values,s,d){
-  // here
+  valueResults.push(JSON.parse(JSON.stringify(values)));
+  
+  /*Square has a given value and this function eliminates 
+  the value from its peers*/
+//values=possibilities for each seperate peer
+//s= position of square on grid
+//d= number that we will eliminate
+//Eliminate the value d in the square s from values
+// no flippin IF stmt for now
+    if(!values[s].contains(d)){
+        
+        return values;}
+    values[s]=values[s].replace(d,'');
+
+//check the reduced values of the square
+//if the length is equal to 1 we can assign that value to the sqaure
+    if(values[s].length===1){
+        //elminate from peers
+        peers[s].forEach(function(peer){
+            //setTimeout(function(){eliminate(values,peer,values[s])},100);
+            eliminate(values,peer,values[s]);
+        });
+        //setTimeout(function(){myTimer()},8500);
+    }  
+    return values;
 }
-
-
 function draw(values){
     for(var key in values){
         document.getElementById(key).innerHTML = values[key]; 
     }
 }
+var x= parseGrid(puzzle);
+//var myVar=setTimeout((draw(x),10);
+//setTimeout(function(){draw(x)},1000);
+valueResults.push(x);
+var myTimer;
+valueResults.forEach(function(r) { 
+    myTimer=setInterval(function(){draw(r)},1000)
+ 
+
+//draw(valueResults);   
+}, this); 
+//clearInterval(myTimer); 
+draw(x); 
+/*
+valueResults.forEach(function(r) {myTimer});
+var myTimer=setInterval(function(){draw(r)},1000);
+clearInterval(myTimer);
+*/
+
+    
+
+
